@@ -61,11 +61,25 @@
         <div class="question">
             <p class="question-text">Tũn sinh năm bao nhiêu?</p>
             <div class="options">
-                <button class="option" onclick="checkAnswer('A', 1993)">A. 2017</button>
-                <button class="option" onclick="checkAnswer('B', 1993)">B. 1993</button>
-                <button class="option" onclick="checkAnswer('C', 1993)">C. 2018</button>
+                <button class="option" onclick="checkAnswer('A', 'year')">A. 2017</button>
+                <button class="option" onclick="checkAnswer('B', 'year')">B. 1993</button>
+                <button class="option" onclick="checkAnswer('C', 'year')">C. 2018</button>
             </div>
             <p id="result" class="result"></p>
+        </div>
+    </div>
+
+    <div class="quiz-section">
+        <h2>Quiz: Bà Nội Tũn Tên Gì?</h2>
+        <div class="question">
+            <p class="question-text">Bà nội Tũn tên gì?</p>
+            <div class="options">
+                <button class="option" onclick="checkAnswer('A', 'grandmother')">A. Trịnh Gia Bảo</button>
+                <button class="option" onclick="checkAnswer('B', 'grandmother')">B. Trịnh Phương Bảo Ngọc</button>
+                <button class="option" onclick="checkAnswer('C', 'grandmother')">C. Nhớ</button>
+                <button class="option" onclick="checkAnswer('D', 'grandmother')">D. Nguyễn Thị Bình</button>
+            </div>
+            <p id="result2" class="result"></p>
         </div>
     </div>
 
@@ -105,17 +119,36 @@
             // Audio sẽ tự loop vì có thuộc tính loop
         });
 
-        function checkAnswer(choice, correctYear) {
-            const resultElement = document.getElementById('result');
-            const correctAnswer = 'A';
+        function checkAnswer(choice, quizType) {
+            let resultElement;
+            let correctAnswer;
+            let resultText = '';
             
-            if (choice === correctAnswer) {
-                resultElement.textContent = '✓ Chính xác! Tũn sinh năm 2017';
-                resultElement.className = 'result correct';
-            } else {
-                resultElement.textContent = '✗ Sai rồi! Tũn sinh năm 2017 (đáp án đúng là A)';
-                resultElement.className = 'result incorrect';
+            if (quizType === 'year') {
+                resultElement = document.getElementById('result');
+                correctAnswer = 'A';
+                
+                if (choice === correctAnswer) {
+                    resultText = '✓ Chính xác! Tũn sinh năm 2017';
+                    resultElement.className = 'result correct';
+                } else {
+                    resultText = '✗ Sai rồi! Tũn sinh năm 2017 (đáp án đúng là A)';
+                    resultElement.className = 'result incorrect';
+                }
+            } else if (quizType === 'grandmother') {
+                resultElement = document.getElementById('result2');
+                correctAnswer = 'D';
+                
+                if (choice === correctAnswer) {
+                    resultText = '✓ Chính xác! Bà nội Tũn tên là Nguyễn Thị Bình';
+                    resultElement.className = 'result correct';
+                } else {
+                    resultText = '✗ Sai rồi! Bà nội Tũn tên là Nguyễn Thị Bình (đáp án đúng là D)';
+                    resultElement.className = 'result incorrect';
+                }
             }
+            
+            resultElement.textContent = resultText;
         }
     </script>
     
