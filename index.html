@@ -23,6 +23,34 @@
         <p>Mẹ luôn chăm sóc gia đình với tấm lòng yêu thương</p>
         <p>Mẹ là nguồn cảm hứng và sự ủng hộ của Tũn</p>
     </div>
+
+    <div class="quiz-section">
+        <h2>Quiz: Tũn Sinh Năm Bao Nhiêu?</h2>
+        <div class="question">
+            <p class="question-text">Tũn sinh năm bao nhiêu?</p>
+            <div class="options">
+                <button class="option" onclick="checkAnswer('A', 1993)">A. 2017</button>
+                <button class="option" onclick="checkAnswer('B', 1993)">B. 1993</button>
+                <button class="option" onclick="checkAnswer('C', 1993)">C. 2018</button>
+            </div>
+            <p id="result" class="result"></p>
+        </div>
+    </div>
+
+    <script>
+        function checkAnswer(choice, correctYear) {
+            const resultElement = document.getElementById('result');
+            const correctAnswer = 'B';
+            
+            if (choice === correctAnswer) {
+                resultElement.textContent = '✓ Chính xác! Tũn sinh năm 1993';
+                resultElement.className = 'result correct';
+            } else {
+                resultElement.textContent = '✗ Sai rồi! Tũn sinh năm 1993 (đáp án B)';
+                resultElement.className = 'result incorrect';
+            }
+        }
+    </script>
     
 </body>
 </html>
