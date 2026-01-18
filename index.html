@@ -40,13 +40,13 @@
     <script>
         function checkAnswer(choice, correctYear) {
             const resultElement = document.getElementById('result');
-            const correctAnswer = 'B';
+            const correctAnswer = 'A';
             
             if (choice === correctAnswer) {
-                resultElement.textContent = '✓ Chính xác! Tũn sinh năm 1993';
+                resultElement.textContent = '✓ Chính xác! Tũn sinh năm 2017';
                 resultElement.className = 'result correct';
             } else {
-                resultElement.textContent = '✗ Sai rồi! Tũn sinh năm 1993 (đáp án B)';
+                resultElement.textContent = '✗ Sai rồi! Tũn sinh năm 2017 (đáp án đúng là A)';
                 resultElement.className = 'result incorrect';
             }
         }
