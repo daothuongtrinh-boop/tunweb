@@ -7,6 +7,13 @@
     <title>Tun</title>
 </head>
 <body>
+    <!-- Custom Cursor -->
+    <div id="customCursor" class="custom-cursor"></div>
+    <div id="cursorTrail" class="cursor-trail"></div>
+
+    <!-- Notification Container -->
+    <div id="notificationContainer" class="notification-container"></div>
+
     <!-- Music Control -->
     <!-- Background Music MP3 -->
     <audio id="bgMusic" loop autoplay>
@@ -93,13 +100,13 @@
                         </div>
                     </div>
                     <div class="skill-item">
-                        <span class="skill-name">Hôn Mếu</span>
+                        <span class="skill-name">Ngu</span>
                         <div class="skill-bar">
                             <div class="skill-progress" style="width: 100%"></div>
                         </div>
                     </div>
                     <div class="skill-item">
-                        <span class="skill-name">Tạo Bạn</span>
+                        <span class="skill-name">Bạn</span>
                         <div class="skill-bar">
                             <div class="skill-progress" style="width: 90%"></div>
                         </div>
@@ -362,6 +369,17 @@
             <button onclick="startFlappyBird()" class="game-btn">Bắt Đầu Game</button>
         </div>
 
+        <!-- Racing Car Game -->
+        <div class="game-card">
+            <h3>🏎️ Đua Xe Hành Độ</h3>
+            <p class="game-description">Dùng mũi tên ← → hoặc A/D để di chuyển xe. Tránh các xe khác và thu thập coin! ⭐</p>
+            <div class="game-container">
+                <canvas id="racingCanvas" width="400" height="500" class="game-canvas"></canvas>
+                <p class="game-info">Điểm: <span id="racingScore">0</span> | Mạng: <span id="racingHealth">3</span> ❤️</p>
+            </div>
+            <button onclick="startRacingGame()" class="game-btn">Bắt Đầu Game</button>
+        </div>
+
         <!-- Memory Match Game -->
         <div class="game-card">
             <h3>🧠 Trò Chơi Ghép Cặp (Memory Match)</h3>
@@ -409,6 +427,27 @@
             </div>
             <p id="wheelResult" class="wheel-result"></p>
             <button onclick="spinLuckyWheel()" class="game-btn">Quay Vòng</button>
+        </div>
+    </div>
+
+    <!-- Leaderboard Section -->
+    <div class="leaderboard-section">
+        <h2>🏆 Bảng Xếp Hạng Các Game</h2>
+        
+        <div class="leaderboard-tabs">
+            <button class="leaderboard-tab active" onclick="showLeaderboard('flappy')">🐦 Flappy Bird</button>
+            <button class="leaderboard-tab" onclick="showLeaderboard('racing')">🏎️ Đua Xe</button>
+            <button class="leaderboard-tab" onclick="showLeaderboard('memory')">🧠 Memory</button>
+            <button class="leaderboard-tab" onclick="showLeaderboard('dice')">🎲 Xúc Xắc</button>
+            <button class="leaderboard-tab" onclick="showLeaderboard('wheel')">🎡 Vòng Quay</button>
+        </div>
+
+        <div id="leaderboardContent" class="leaderboard-content">
+            <!-- Content will be dynamically inserted here -->
+        </div>
+        
+        <div class="leaderboard-actions">
+            <button onclick="clearAllScores()" class="clear-scores-btn">🗑️ Xóa Tất Cả Điểm</button>
         </div>
     </div>
 
@@ -505,11 +544,13 @@
                 musicBtn.classList.remove('playing');
                 musicBtn.querySelector('.music-icon').textContent = '🔇';
                 isBgMusicPlaying = false;
+                notify.info('🔇 Tắt Nhạc', 'Nhạc nền đã được tắt');
             } else {
                 bgMusic.play();
                 musicBtn.classList.add('playing');
                 musicBtn.querySelector('.music-icon').textContent = '🎵';
                 isBgMusicPlaying = true;
+                notify.success('🎵 Bật Nhạc', 'Nhạc nền đang phát');
             }
         });
 
@@ -539,9 +580,11 @@
                 if (choice === correctAnswer) {
                     resultText = '✓ Chính xác! Tũn sinh năm 2017';
                     resultElement.className = 'result correct';
+                    notify.success('Wow! Bạn giỏi quá!', '✓ Bạn trả lời đúng - Tũn sinh năm 2017');
                 } else {
                     resultText = '✗ Sai rồi! Tũn sinh năm 2017 (đáp án đúng là A)';
                     resultElement.className = 'result incorrect';
+                    notify.error('Sai rồi!', '✗ Tũn sinh năm 2017, không phải năm ' + ['2017', '1993', '2018'][['A', 'B', 'C'].indexOf(choice)]);
                 }
             } else if (quizType === 'grandmother') {
                 resultElement = document.getElementById('result2');
@@ -550,9 +593,11 @@
                 if (choice === correctAnswer) {
                     resultText = '✓ Chính xác! Bà nội Tũn tên là Nguyễn Thị Bình';
                     resultElement.className = 'result correct';
+                    notify.success('Tuyệt vời!', '✓ Bạn trả lời đúng - Bà nội là Nguyễn Thị Bình');
                 } else {
                     resultText = '✗ Sai rồi! Bà nội Tũn tên là Nguyễn Thị Bình (đáp án đúng là D)';
                     resultElement.className = 'result incorrect';
+                    notify.error('Sai rồi!', '✗ Bà nội Tũn tên là Nguyễn Thị Bình');
                 }
             }
             
@@ -700,11 +745,96 @@
             displayComments();
 
             // Thông báo thành công
-            alert('Cảm ơn! Lời chúc của bạn đã được gửi cho Tũn! 💌');
+            notify.success('Cảm ơn bạn! 💌', 'Lời chúc của bạn đã được gửi cho Tũn rồi');
         });
 
         // Hiển thị comments khi tải trang
         displayComments();
+
+        // ==================== LEADERBOARD SYSTEM ====================
+        function saveGameScore(gameName, score) {
+            try {
+                let scores = JSON.parse(localStorage.getItem(`leaderboard_${gameName}`)) || [];
+                scores.push({
+                    score: score,
+                    date: new Date().toLocaleString('vi-VN')
+                });
+                // Keep top 10 scores
+                scores.sort((a, b) => b.score - a.score);
+                scores = scores.slice(0, 10);
+                localStorage.setItem(`leaderboard_${gameName}`, JSON.stringify(scores));
+            } catch (e) {
+                console.error('Error saving score:', e);
+            }
+        }
+
+        function getGameScores(gameName) {
+            try {
+                return JSON.parse(localStorage.getItem(`leaderboard_${gameName}`)) || [];
+            } catch (e) {
+                return [];
+            }
+        }
+
+        function showLeaderboard(gameName) {
+            // Update active tab
+            document.querySelectorAll('.leaderboard-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            const scores = getGameScores(gameName);
+            const content = document.getElementById('leaderboardContent');
+
+            const gameNames = {
+                'flappy': '🐦 Flappy Bird',
+                'racing': '🏎️ Đua Xe Hành Độ',
+                'memory': '🧠 Trò Chơi Ghép Cặp',
+                'dice': '🎲 Tung Xúc Xắc',
+                'wheel': '🎡 Vòng Quay May Mắn'
+            };
+
+            let html = `<h3>${gameNames[gameName]}</h3>`;
+
+            if (scores.length === 0) {
+                html += '<div class="empty-leaderboard"><p>Chưa có điểm nào. Hãy chơi game để lấy điểm! 🎮</p></div>';
+            } else {
+                html += '<div class="leaderboard-list">';
+                scores.forEach((entry, index) => {
+                    const medal = ['🥇', '🥈', '🥉'][index] || '•';
+                    html += `
+                        <div class="leaderboard-item rank-${index + 1}">
+                            <div class="rank-badge">${medal}</div>
+                            <div class="rank-info">
+                                <div class="rank-number">#${index + 1}</div>
+                                <div class="rank-date">${entry.date}</div>
+                            </div>
+                            <div class="rank-score">${entry.score.toLocaleString('vi-VN')}</div>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+            }
+
+            content.innerHTML = html;
+        }
+
+        function clearAllScores() {
+            if (confirm('Bạn chắc chắn muốn xóa tất cả điểm? 😢')) {
+                ['flappy', 'racing', 'memory', 'dice', 'wheel'].forEach(game => {
+                    localStorage.removeItem(`leaderboard_${game}`);
+                });
+                showLeaderboard('flappy');
+                notify.warning('Đã Xóa', 'Tất cả điểm đã bị xóa');
+            }
+        }
+
+        // Initialize leaderboard on page load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                showLeaderboard('flappy');
+            }, 1000);
+        });
 
         // ==================== GAMES SECTION ====================
         // Flappy Bird Game
@@ -726,8 +856,8 @@
             const gameCanvas = document.getElementById('flappyCanvas');
             const ctx = gameCanvas.getContext('2d');
             
-            const gravity = 0.5;
-            const pipeGap = 150;
+            const gravity = 0.35;        // Giảm từ 0.5 - chim rơi chậm hơn
+            const pipeGap = 200;         // Tăng từ 150 - khoảng cách giữa ống rộng hơn
             const pipeWidth = 60;
             let frameCount = 0;
 
@@ -753,7 +883,7 @@
                 ctx.fill();
 
                 // Generate pipes
-                if (frameCount % 90 === 0) {
+                if (frameCount % 110 === 0) {      // Tăng từ 90 - ống sinh chậm hơn
                     const pipeHeight = Math.random() * 150 + 50;
                     pipes.push({
                         x: gameCanvas.width,
@@ -766,7 +896,7 @@
                 // Draw and update pipes
                 ctx.fillStyle = '#228B22';
                 pipes.forEach((pipe, index) => {
-                    pipe.x -= 5;
+                    pipe.x -= 3.5;                  // Giảm từ 5 - ống di chuyển chậm hơn
 
                     // Draw top pipe
                     ctx.fillRect(pipe.x, 0, pipeWidth, pipe.topHeight);
@@ -807,7 +937,8 @@
 
         function endFlappyGame() {
             gameRunning = false;
-            alert(`Game Over! Điểm của bạn: ${score}`);
+            saveGameScore('flappy', score);
+            notify.warning('Game Over! 🐦', `Điểm của bạn: ${score} điểm`);
             document.getElementById('flappyScore').textContent = '0';
         }
 
@@ -826,16 +957,168 @@
             }
         });
 
+        // ==================== RACING CAR GAME ====================
+        let racingGameActive = false;
+        let carX = 175;
+        let racingScore = 0;
+        let racingHealth = 3;
+        let racingRunning = false;
+        let racingObstacles = [];
+        let racingCoins = [];
+
+        const racingKeys = {};
+        document.addEventListener('keydown', (e) => {
+            racingKeys[e.key] = true;
+        });
+        document.addEventListener('keyup', (e) => {
+            racingKeys[e.key] = false;
+        });
+
+        function startRacingGame() {
+            racingGameActive = true;
+            racingRunning = true;
+            carX = 175;
+            racingScore = 0;
+            racingHealth = 3;
+            racingObstacles = [];
+            racingCoins = [];
+
+            const canvas = document.getElementById('racingCanvas');
+            const ctx = canvas.getContext('2d');
+
+            let frameCount = 0;
+            const carWidth = 30;
+            const carHeight = 40;
+            const obstacleWidth = 40;
+            const obstacleHeight = 40;
+            const coinRadius = 8;
+
+            function update() {
+                if (!racingRunning) return;
+
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                // Draw road
+                ctx.fillStyle = '#333';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.strokeStyle = '#FFD700';
+                ctx.lineWidth = 3;
+                for (let i = 0; i < canvas.height; i += 50) {
+                    ctx.beginPath();
+                    ctx.moveTo(canvas.width / 2, i);
+                    ctx.lineTo(canvas.width / 2, i + 25);
+                    ctx.stroke();
+                }
+
+                // Car movement
+                if (racingKeys['ArrowLeft'] || racingKeys['a'] || racingKeys['A']) {
+                    carX = Math.max(10, carX - 6);
+                }
+                if (racingKeys['ArrowRight'] || racingKeys['d'] || racingKeys['D']) {
+                    carX = Math.min(canvas.width - carWidth - 10, carX + 6);
+                }
+
+                // Draw car
+                ctx.fillStyle = '#FF6B9D';
+                ctx.fillRect(carX, canvas.height - 60, carWidth, carHeight);
+                ctx.fillStyle = '#FFD700';
+                ctx.fillRect(carX + 5, canvas.height - 55, 8, 10);
+                ctx.fillRect(carX + 17, canvas.height - 55, 8, 10);
+
+                // Generate obstacles
+                if (frameCount % 60 === 0) {
+                    const obsX = Math.random() * (canvas.width - obstacleWidth);
+                    racingObstacles.push({ x: obsX, y: -obstacleHeight });
+                }
+
+                // Generate coins
+                if (frameCount % 80 === 0) {
+                    const coinX = Math.random() * (canvas.width - coinRadius * 2);
+                    racingCoins.push({ x: coinX, y: -coinRadius * 2 });
+                }
+
+                // Draw and update obstacles
+                ctx.fillStyle = '#FF3333';
+                racingObstacles.forEach((obs, index) => {
+                    obs.y += 5;
+                    ctx.fillRect(obs.x, obs.y, obstacleWidth, obstacleHeight);
+
+                    // Collision check
+                    if (obs.x < carX + carWidth &&
+                        obs.x + obstacleWidth > carX &&
+                        obs.y < canvas.height - 60 + carHeight &&
+                        obs.y + obstacleHeight > canvas.height - 60) {
+                        racingHealth--;
+                        document.getElementById('racingHealth').textContent = racingHealth;
+                        racingObstacles.splice(index, 1);
+                        if (racingHealth <= 0) {
+                            endRacingGame();
+                        }
+                    }
+
+                    if (obs.y > canvas.height) {
+                        racingObstacles.splice(index, 1);
+                        racingScore += 10;
+                        document.getElementById('racingScore').textContent = racingScore;
+                    }
+                });
+
+                // Draw and update coins
+                ctx.fillStyle = '#FFD700';
+                racingCoins.forEach((coin, index) => {
+                    coin.y += 4;
+                    ctx.beginPath();
+                    ctx.arc(coin.x + coinRadius, coin.y + coinRadius, coinRadius, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // Coin collection
+                    if (coin.x < carX + carWidth &&
+                        coin.x + coinRadius * 2 > carX &&
+                        coin.y < canvas.height - 60 + carHeight &&
+                        coin.y + coinRadius * 2 > canvas.height - 60) {
+                        racingScore += 50;
+                        document.getElementById('racingScore').textContent = racingScore;
+                        racingCoins.splice(index, 1);
+                    }
+
+                    if (coin.y > canvas.height) {
+                        racingCoins.splice(index, 1);
+                    }
+                });
+
+                // Draw score and health
+                ctx.fillStyle = '#FFF';
+                ctx.font = 'bold 16px Arial';
+                ctx.fillText('Điểm: ' + racingScore, 10, 30);
+                ctx.fillText('Mạng: ' + racingHealth, canvas.width - 100, 30);
+
+                frameCount++;
+                requestAnimationFrame(update);
+            }
+
+            update();
+        }
+
+        function endRacingGame() {
+            racingRunning = false;
+            saveGameScore('racing', racingScore);
+            notify.warning('Xe Bạn Bị Hỏng! 💥', `Điểm cuối cùng: ${racingScore} điểm`);
+            document.getElementById('racingScore').textContent = '0';
+            document.getElementById('racingHealth').textContent = '3';
+        }
+
         // Memory Match Game
         const memoryCards = ['🎮', '🎵', '🎨', '🎯', '🎮', '🎵', '🎨', '🎯'];
         let shuffledCards = [];
         let flippedCards = [];
         let matchedCards = [];
+        let memoryAttempts = 0;
 
         function initMemoryGame() {
             shuffledCards = memoryCards.sort(() => Math.random() - 0.5);
             flippedCards = [];
             matchedCards = [];
+            memoryAttempts = 0;
             renderMemoryBoard();
         }
 
@@ -864,6 +1147,7 @@
             renderMemoryBoard();
 
             if (flippedCards.length === 2) {
+                memoryAttempts++;
                 const [first, second] = flippedCards;
                 if (shuffledCards[first] === shuffledCards[second]) {
                     matchedCards.push(first, second);
@@ -871,8 +1155,10 @@
                     renderMemoryBoard();
                     
                     if (matchedCards.length === shuffledCards.length) {
+                        const score = Math.max(100 - memoryAttempts * 5, 10);
                         setTimeout(() => {
-                            alert('Bạn đã chiến thắng! 🎉');
+                            saveGameScore('memory', score);
+                            notify.neon('Chiến thắng! 🎉', `Bạn hoàn thành với ${memoryAttempts} lần thử - Điểm: ${score}`);
                             initMemoryGame();
                         }, 500);
                     }
@@ -892,6 +1178,9 @@
             diceDisplay.textContent = result;
             diceDisplay.style.transform = 'rotateX(360deg) rotateY(360deg)';
             
+            saveGameScore('dice', result * 10);
+            notify.info('🎲 Tung Xúc Xắc', `Bạn được: ${result} chấm - Điểm: ${result * 10}`);
+            
             setTimeout(() => {
                 diceDisplay.style.transform = 'rotateX(0deg) rotateY(0deg)';
             }, 500);
@@ -908,17 +1197,154 @@
                 '🏆 Top 1 Game Thủ',
                 '✨ Ngoài Tưởng Tượng'
             ];
+            const rewardPoints = [100, 150, 200, 120, 250, 300];
             
             const randomRotation = Math.floor(Math.random() * 360);
             const wheelRotation = randomRotation + 1800;
+            const rewardIndex = Math.floor(randomRotation / 60);
             
             wheel.style.transform = `rotate(${wheelRotation}deg)`;
             
             setTimeout(() => {
-                const reward = rewards[Math.floor(randomRotation / 60)];
+                const reward = rewards[rewardIndex];
+                const points = rewardPoints[rewardIndex];
                 document.getElementById('wheelResult').textContent = reward;
+                saveGameScore('wheel', points);
+                notify.success('🎡 Vòng Quay May Mắn!', `${reward} - Điểm: ${points}`);
             }, 1000);
         }
+
+        // ==================== CUSTOM CURSOR EFFECTS ====================
+        const customCursor = document.getElementById('customCursor');
+        let mouseX = 0;
+        let mouseY = 0;
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+
+            // Move main cursor
+            customCursor.style.left = mouseX + 'px';
+            customCursor.style.top = mouseY + 'px';
+
+            // Create trail particles
+            createTrailParticle(mouseX, mouseY);
+        });
+
+        function createTrailParticle(x, y) {
+            const trail = document.createElement('div');
+            trail.className = 'cursor-trail';
+            trail.style.left = x + 'px';
+            trail.style.top = y + 'px';
+            document.body.appendChild(trail);
+
+            // Random offset for variety
+            const offsetX = (Math.random() - 0.5) * 20;
+            const offsetY = (Math.random() - 0.5) * 20;
+            
+            trail.style.setProperty('--offsetX', offsetX + 'px');
+            trail.style.setProperty('--offsetY', offsetY + 'px');
+
+            // Remove after animation
+            setTimeout(() => {
+                trail.remove();
+            }, 600);
+        }
+
+        // Hide cursor when leaving window
+        document.addEventListener('mouseleave', () => {
+            customCursor.style.opacity = '0';
+        });
+
+        document.addEventListener('mouseenter', () => {
+            customCursor.style.opacity = '1';
+        });
+
+        // Click effect
+        document.addEventListener('click', () => {
+            customCursor.style.transform = 'translate(-50%, -50%) scale(0.8)';
+            setTimeout(() => {
+                customCursor.style.transform = 'translate(-50%, -50%) scale(1)';
+            }, 150);
+        });
+
+        // ==================== NOTIFICATION SYSTEM ====================
+        function showNotification(title, message = '', type = 'info', duration = 4000) {
+            const container = document.getElementById('notificationContainer');
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+
+            const icons = {
+                success: '✓',
+                error: '✕',
+                warning: '⚠',
+                info: 'ℹ',
+                neon: '✨'
+            };
+
+            const icon = icons[type] || '•';
+
+            notification.innerHTML = `
+                <div class="notification-icon">${icon}</div>
+                <div class="notification-content">
+                    <div class="notification-title">${title}</div>
+                    ${message ? `<div class="notification-message">${message}</div>` : ''}
+                </div>
+                <div class="notification-close">✕</div>
+            `;
+
+            container.appendChild(notification);
+
+            // Close on click
+            notification.querySelector('.notification-close').addEventListener('click', () => {
+                removeNotification(notification);
+            });
+
+            // Auto remove after duration
+            const timeoutId = setTimeout(() => {
+                removeNotification(notification);
+            }, duration);
+
+            // Remove on hover close
+            notification.addEventListener('mouseenter', () => {
+                clearTimeout(timeoutId);
+            });
+
+            notification.addEventListener('mouseleave', () => {
+                setTimeout(() => {
+                    if (notification.parentElement) {
+                        removeNotification(notification);
+                    }
+                }, duration - 2000);
+            });
+
+            return notification;
+        }
+
+        function removeNotification(notification) {
+            notification.style.animation = 'notificationSlideOut 0.5s cubic-bezier(0.6, -0.28, 0.735, 0.045) forwards';
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.remove();
+                }
+            }, 500);
+        }
+
+        // Shortcut functions
+        window.notify = {
+            success: (title, message = '') => showNotification(title, message, 'success', 4000),
+            error: (title, message = '') => showNotification(title, message, 'error', 5000),
+            warning: (title, message = '') => showNotification(title, message, 'warning', 4000),
+            info: (title, message = '') => showNotification(title, message, 'info', 4000),
+            neon: (title, message = '') => showNotification(title, message, 'neon', 3000)
+        };
+
+        // Example notifications on page load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                notify.neon('Xin chào Tũn!', '🎉 Chào mừng bạn đến với trang web đẹp của Tũn');
+            }, 500);
+        });
     </script>
     
 </body>
