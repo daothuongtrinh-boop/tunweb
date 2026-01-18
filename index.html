@@ -4,12 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="main.css">
-    <title>Document</title>
+    <title>Tun</title>
 </head>
 <body>
+    <!-- Music Control -->
+    <audio id="bgMusic" loop>
+        <source src="https://www.youtube.com/watch?v=O15M5ZJ4LU8" type="audio/mpeg">
+        Trình duyệt của bạn không hỗ trợ audio.
+    </audio>
+    
+    <button id="musicBtn" class="music-control" title="Bật/Tắt nhạc">
+        <span class="music-icon">🎵</span>
+    </button>
+
     <h1 class="tun">Hello Tũn</h1>
     <h1 class="tunia">Cách Tũn Đi Ỉa</h1>
     <a href="https://www.facebook.com/nhung.trinh.9659283?locale=vi_VN" target="_blank">Bấm Vào Đây Để Méc Mẹ Tũn</a>
+
+    <div class="about-section">
+        <h2>Giới Thiệu Về Tũn</h2>
+        <p>Tũn là một cá nhân thú vị với những câu chuyện độc đáo</p>
+        <p>Tũn yêu thích những điều đơn giản nhưng có ý nghĩa</p>
+        <p>Tũn luôn mang nụ cười và sự lạc quan trong cuộc sống</p>
+        <p>Tũn là người bạn đáng tin cậy và tấm lòng luôn sẵn sàng giúp đỡ</p>
+    </div>
+
     <ol class="tun1">
         <li >Cởi Quần</li>
         <li >Ngồi Xuống</li>
@@ -38,6 +57,34 @@
     </div>
 
     <script>
+        // Music Control
+        const bgMusic = document.getElementById('bgMusic');
+        const musicBtn = document.getElementById('musicBtn');
+        let isPlaying = false;
+
+        musicBtn.addEventListener('click', function() {
+            if (isPlaying) {
+                bgMusic.pause();
+                musicBtn.classList.remove('playing');
+                musicBtn.querySelector('.music-icon').textContent = '🔇';
+                isPlaying = false;
+            } else {
+                bgMusic.play();
+                musicBtn.classList.add('playing');
+                musicBtn.querySelector('.music-icon').textContent = '🎵';
+                isPlaying = true;
+            }
+        });
+
+        // Auto play when page loads (nếu browser cho phép)
+        window.addEventListener('load', function() {
+            bgMusic.play().catch(function(error) {
+                console.log('Autoplay bị chặn. Người dùng cần click nút để phát nhạc.');
+            });
+            isPlaying = true;
+            musicBtn.classList.add('playing');
+        });
+
         function checkAnswer(choice, correctYear) {
             const resultElement = document.getElementById('result');
             const correctAnswer = 'A';
