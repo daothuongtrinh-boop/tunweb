@@ -449,6 +449,197 @@ a:active {
     box-shadow: 0 6px 20px rgba(220, 53, 69, 0.3);
 }
 
+/* ==================== GALLERY SECTION ==================== */
+.gallery-section {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(240, 147, 251, 0.1));
+    padding: 50px;
+    margin: 50px auto;
+    border-radius: 30px;
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.25);
+    max-width: 1000px;
+    border-top: 6px solid #f093fb;
+    border-right: 3px solid rgba(240, 147, 251, 0.3);
+    animation: slideInUp 0.8s ease-out both;
+    backdrop-filter: blur(10px);
+}
+
+.gallery-section h2 {
+    text-align: center;
+    color: #764ba2;
+    font-size: 40px;
+    margin-bottom: 40px;
+    text-shadow: 2px 2px 4px rgba(118, 75, 162, 0.2);
+}
+
+.gallery-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 25px;
+    padding: 20px;
+}
+
+.gallery-item {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(102, 126, 234, 0.08));
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    border: 2px solid rgba(102, 126, 234, 0.2);
+    padding: 15px;
+    text-align: center;
+}
+
+.gallery-item:hover {
+    transform: translateY(-15px);
+    box-shadow: 0 15px 40px rgba(102, 126, 234, 0.3);
+    border-color: rgba(102, 126, 234, 0.4);
+}
+
+.gallery-img {
+    width: 100%;
+    height: 220px;
+    background: linear-gradient(135deg, #e8f4ff, #f0e8ff);
+    border-radius: 15px;
+    object-fit: cover;
+    transition: all 0.4s ease;
+    border: 2px solid #667eea;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #667eea;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.gallery-img:hover {
+    transform: scale(1.05);
+    border-color: #764ba2;
+}
+
+.gallery-label {
+    font-size: 18px;
+    font-weight: bold;
+    color: #667eea;
+    margin-top: 12px;
+    margin-bottom: 5px;
+}
+
+.gallery-instruction {
+    font-size: 12px;
+    color: #999;
+    font-style: italic;
+    margin: 5px 0;
+}
+
+/* ==================== GAMING SECTION ==================== */
+.gaming-section {
+    padding: 50px 20px;
+    margin: 50px auto;
+    max-width: 900px;
+    display: flex;
+    justify-content: center;
+}
+
+.gaming-card {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(102, 126, 234, 0.1));
+    border-radius: 30px;
+    padding: 50px;
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.25);
+    border: 3px solid rgba(102, 126, 234, 0.3);
+    text-align: center;
+    max-width: 600px;
+    animation: slideInUp 0.8s ease-out both;
+    backdrop-filter: blur(10px);
+}
+
+.gaming-icon {
+    font-size: 80px;
+    margin-bottom: 20px;
+    animation: float 3s ease-in-out infinite;
+}
+
+.gaming-card h2 {
+    color: #667eea;
+    font-size: 40px;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 4px rgba(102, 126, 234, 0.2);
+}
+
+.gaming-description {
+    color: #2c3e50;
+    font-size: 18px;
+    line-height: 2;
+    margin-bottom: 30px;
+    font-weight: 500;
+}
+
+.gaming-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 18px 40px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    text-decoration: none;
+    border-radius: 25px;
+    font-weight: bold;
+    font-size: 18px;
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+    border: none;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.gaming-link::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.2);
+    transition: left 0.5s ease;
+    border-radius: 25px;
+}
+
+.gaming-link:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 40px rgba(102, 126, 234, 0.6);
+}
+
+.gaming-link:hover::before {
+    left: 100%;
+}
+
+.gaming-link:hover .arrow {
+    animation: slideArrow 0.6s ease-in-out;
+}
+
+@keyframes slideArrow {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    50% {
+        transform: translateX(8px);
+    }
+}
+
+.arrow {
+    font-weight: bold;
+    font-size: 20px;
+    transition: transform 0.3s ease;
+}
+
+.gaming-instruction {
+    font-size: 14px;
+    color: #f093fb;
+    font-style: italic;
+    margin-top: 20px;
+    font-weight: 600;
+}
+
 /* ==================== RESPONSIVE ==================== */
 @media (max-width: 768px) {
     .tun {
@@ -479,5 +670,19 @@ a:active {
         font-size: 24px;
         top: 20px;
         right: 20px;
+    }
+
+    .gallery-container {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+    }
+
+    .gallery-img {
+        height: 180px;
+    }
+
+    .gallery-section {
+        padding: 30px;
+        margin: 30px 10px;
     }
 }
