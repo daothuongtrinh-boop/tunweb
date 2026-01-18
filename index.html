@@ -8,14 +8,26 @@
 </head>
 <body>
     <!-- Music Control -->
-    <audio id="bgMusic" loop>
-        <source src="https://www.youtube.com/watch?v=O15M5ZJ4LU8" type="audio/mpeg">
+    <!-- Cách 1: Audio MP3 (thay link YouTube thành MP3) -->
+    <!-- <audio id="bgMusic" loop>
+        <source src="LINK_MP3_CỦA_BẠN" type="audio/mpeg">
         Trình duyệt của bạn không hỗ trợ audio.
-    </audio>
-    
+    </audio> -->
+
+    <!-- Cách 2: YouTube Player -->
     <button id="musicBtn" class="music-control" title="Bật/Tắt nhạc">
         <span class="music-icon">🎵</span>
     </button>
+
+    <div id="youtubePlayer" style="position: fixed; bottom: 20px; right: 20px; z-index: 999; width: 280px; display: none; background: black; border-radius: 10px; overflow: hidden; box-shadow: 0 8px 25px rgba(0,0,0,0.3);">
+        <iframe id="player" width="100%" height="200" 
+            src="https://www.youtube.com/embed/dQw4w9WgXcQ?controls=1&modestbranding=1" 
+            title="YouTube video player" 
+            frameborder="0" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+            allowfullscreen>
+        </iframe>
+    </div>
 
     <h1 class="tun">Hello Tũn</h1>
     <h1 class="tunia">Cách Tũn Đi Ỉa</h1>
@@ -58,29 +70,27 @@
 
     <script>
         // Music Control
-        const bgMusic = document.getElementById('bgMusic');
+        const youtubePlayer = document.getElementById('youtubePlayer');
         const musicBtn = document.getElementById('musicBtn');
         let isPlaying = false;
 
         musicBtn.addEventListener('click', function() {
             if (isPlaying) {
-                bgMusic.pause();
+                youtubePlayer.style.display = 'none';
                 musicBtn.classList.remove('playing');
                 musicBtn.querySelector('.music-icon').textContent = '🔇';
                 isPlaying = false;
             } else {
-                bgMusic.play();
+                youtubePlayer.style.display = 'block';
                 musicBtn.classList.add('playing');
                 musicBtn.querySelector('.music-icon').textContent = '🎵';
                 isPlaying = true;
             }
         });
 
-        // Auto play when page loads (nếu browser cho phép)
+        // Auto show player khi tải trang
         window.addEventListener('load', function() {
-            bgMusic.play().catch(function(error) {
-                console.log('Autoplay bị chặn. Người dùng cần click nút để phát nhạc.');
-            });
+            youtubePlayer.style.display = 'block';
             isPlaying = true;
             musicBtn.classList.add('playing');
         });
